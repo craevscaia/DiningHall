@@ -41,9 +41,12 @@ public class OrderService : IOrderService
         var table = _tableService.GetFreeTable();
         if (table != null)
         {
-            var order = _orderRepository.GenerateOrder();
-            order.TableId = table.Id;
-            SendOrder(order);
+           var orders = _orderRepository.GenerateOrder();
+           foreach (var order in orders)
+           {
+               SendOrder(order);
+           }
+
         }
     }
 }

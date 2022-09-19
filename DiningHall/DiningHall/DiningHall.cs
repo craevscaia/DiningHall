@@ -1,25 +1,34 @@
-﻿using DiningHall.Repository.OrderRepository;
+﻿using DiningHall.Services.FoodService;
 using DiningHall.Services.OrderService;
 using DiningHall.Services.TableService;
+using DiningHall.Services.WaiterService;
 
 namespace DiningHall.DiningHall;
 
 public class DiningHall : IDiningHall
 {
     private readonly IOrderService _orderService;
-    private readonly IOrderRepository _orderRepository;
     private readonly ITableService _tableService;
+    private readonly IWaiterService _waiterService;
+    private readonly IFoodService _foodService;
 
-    public DiningHall(IOrderRepository orderRepository, IOrderService orderService, ITableService tableService)
+    public DiningHall(IOrderService orderService, ITableService tableService, IWaiterService waiterService,
+        IFoodService foodService)
     {
-        _orderRepository = orderRepository;
         _orderService = orderService;
         _tableService = tableService;
+        _waiterService = waiterService;
+        _foodService = foodService;
     }
 
     public void InitializeDiningHall()
     {
-        _tableService.GenerateTables();
+        Parallel.Invoke(
+            () => _tableService.GenerateTables(),
+            () => _waiterService.GenerateWaiters(),
+            () => _foodService.GenerateFood()
+        );
+        Task.WaitAll();
     }
 
     public void MaintainDiningHall(CancellationToken stoppingToken)
@@ -29,8 +38,6 @@ public class DiningHall : IDiningHall
         while (!stoppingToken.IsCancellationRequested)
         {
             _orderService.AssignTableOrder();
-            Thread.Sleep(7000);
         }
-        
     }
 }

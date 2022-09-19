@@ -121,14 +121,11 @@ public class FoodRepository : IFoodRepository
 
     public IList<Food> GetFood()
     {
-        GenerateFood();
         return _menu;
     }
 
     public Food? GetFoodById(int id)
     {
-        GenerateFood();
-
         return _menu.FirstOrDefault(food => food.Id.Equals(id));
     }
 }
