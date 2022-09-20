@@ -1,7 +1,4 @@
 ﻿using DiningHall.DiningHall;
-using DiningHall.Repository.OrderRepository;
-using DiningHall.Repository.TableRepository;
-
 namespace DiningHall.BackgroundTask;
 
 public class BackgroundTask : BackgroundService
@@ -13,13 +10,24 @@ public class BackgroundTask : BackgroundService
         _serviceScopeFactory = serviceScopeFactory;
     }
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Task.Delay(5000); // freez the program for x time
-        using var scope = _serviceScopeFactory.CreateScope();
-        var diningHall = scope.ServiceProvider.GetRequiredService<IDiningHall>();
-        diningHall.MaintainDiningHall(stoppingToken);
-    
-        return Task.CompletedTask;
+        try
+        {
+            await Task.Delay(5000, stoppingToken);
+            using var scope = _serviceScopeFactory.CreateScope();
+            var diningHall = scope.ServiceProvider.GetRequiredService<IDiningHall>();
+            await diningHall.InitializeDiningHall(); //initialize dining hall method
+            diningHall.MaintainDiningHall(stoppingToken);
+        }
+        catch (Exception)
+        {
+            // ignored
+        }
+        finally
+        {
+            if (!stoppingToken.IsCancellationRequested)
+                Console.WriteLine("Programul a dorit sa se opreasca asa ca el s-a oprit");
+        }
     }
 }

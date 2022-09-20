@@ -26,4 +26,18 @@ public class FoodService : IFoodService
     {
         return _foodRepository.GetFoodById(id);
     }
+    
+    public IList<int> GenerateOrderFood()
+    {
+        var random = new Random();
+        var size = random.Next(10);
+        var listOfFood = new List<int>();
+
+        for (var id = 0; id < size; id++)
+        {
+            listOfFood.Add(random.Next(13));
+        }
+
+        return listOfFood;
+    }
 }

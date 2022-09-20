@@ -20,24 +20,28 @@ public class DiningHall : IDiningHall
         _waiterService = waiterService;
         _foodService = foodService;
     }
-
-    public void InitializeDiningHall()
+    
+    //This will run in paraele three method that generate tables, waiters and food
+    
+    public async Task InitializeDiningHall()
     {
-        Parallel.Invoke(
-            () => _tableService.GenerateTables(),
-            () => _waiterService.GenerateWaiters(),
-            () => _foodService.GenerateFood()
-        );
-        Task.WaitAll();
+        var taskList = new List<Task>
+        {
+            Task.Run(() => _foodService.GenerateFood()),
+            Task.Run(() => _waiterService.GenerateWaiters()),
+            Task.Run(() => _tableService.GenerateTables())
+        };
+
+        await Task.WhenAll(taskList);
     }
+
 
     public void MaintainDiningHall(CancellationToken stoppingToken)
     {
-        InitializeDiningHall();
-
         while (!stoppingToken.IsCancellationRequested)
         {
-            _orderService.AssignTableOrder();
+            _orderService.GenerateAndSendOrder();
         }
     }
+
 }

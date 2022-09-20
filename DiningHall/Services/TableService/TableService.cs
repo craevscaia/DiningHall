@@ -17,10 +17,10 @@ public class TableService : ITableService
     {
         _tableRepository.GenerateTables();
     }
-
-    public Table? GetFreeTable()
+    
+    public Table? GetTableByStatus(Status status)
     {
-        return _tableRepository.GetFreeTable();
+        return _tableRepository.GetTableByStatus(status);
     }
 
     public IList<Table> GetTable()

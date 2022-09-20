@@ -7,5 +7,5 @@ public interface ITableService
     Table? GetTableById(int id);
     IList<Table> GetTable();
     void GenerateTables();
-    Table? GetFreeTable();
+    Table? GetTableByStatus(Status status);
 }
