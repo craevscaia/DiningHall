@@ -1,7 +1,9 @@
 ﻿using DiningHall.Models;
+
 namespace DiningHall.Repository.OrderRepository;
 
 public interface IOrderRepository
 {
-    IList<Order> GenerateOrder();
+    void InsertOrder(Order order);
+    Task<Order?> GetOrderByTableId(int tableId);
 }

@@ -26,9 +26,13 @@ public class WaiterRepository : IWaiterRepository
         return _waiters;
     }
 
-    public Waiter? GetWaiterById(int id)
+    public Task<Waiter?> GetWaiterById(int id)
     {
-        return _waiters.FirstOrDefault(waiters => waiters.Id.Equals(id));
+        return Task.FromResult(_waiters.FirstOrDefault(waiters => waiters.Id.Equals(id)));
     }
-    
+
+    public Task<Waiter?> GetFreeWaiter()
+    {
+        return Task.FromResult(_waiters.FirstOrDefault(waiter => waiter.IsFree));
+    }
 }

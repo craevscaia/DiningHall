@@ -6,5 +6,7 @@ public interface IWaiterService
 {
     void GenerateWaiters();
     IList<Waiter> GetWaiters();
-    Waiter? GetWaitersById(int id);
+    Task<Waiter?> GetWaitersById(int id);
+    Task<Waiter?> GetFreeWaiter();
+    Task ServTable();
 }

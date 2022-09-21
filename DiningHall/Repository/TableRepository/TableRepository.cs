@@ -1,14 +1,15 @@
-﻿using DiningHall.Models;
+﻿using System.Collections.Concurrent;
+using DiningHall.Models;
 
 namespace DiningHall.Repository.TableRepository;
 
 public class TableRepository : ITableRepository
 {
-    private readonly IList<Table> _tables;
+    private readonly ConcurrentBag<Table> _tables;
 
     public TableRepository()
     {
-        _tables = new List<Table>();
+        _tables = new ConcurrentBag<Table>();
     }
 
     public void GenerateTables()
@@ -23,18 +24,23 @@ public class TableRepository : ITableRepository
         }
     }
 
-    public IList<Table> GetTable()
+    public ConcurrentBag<Table> GetTable()
     {
         return _tables;
     }
 
-    public Table? GetTableById(int id)
+    public Task<Table?> GetTableById(int id)
     {
-        return _tables.FirstOrDefault(table => table.Id.Equals(id));
+        return Task.FromResult(_tables.FirstOrDefault(table => table.Id.Equals(id)));
     }
 
-    public Table? GetFreeTable()
+    public Task<Table?> GetFreeTable()
     {
-        return _tables.FirstOrDefault(table => table.Status == Status.Free);
+        return Task.FromResult(_tables.FirstOrDefault(table => table.Status == Status.Free));
+    }
+
+    public Task<Table?> GetTableByStatus(Status status)
+    {
+        return Task.FromResult(_tables.FirstOrDefault(table => table.Status == status));
     }
 }

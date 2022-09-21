@@ -1,51 +1,23 @@
 ﻿using DiningHall.Models;
-using DiningHall.Repository.FoodRepository;
 
 namespace DiningHall.Repository.OrderRepository;
 
 public class OrderRepository : IOrderRepository
 {
-    private IFoodRepository _foodRepository;
+    private IList<Order> _orders;
 
-    public OrderRepository(IFoodRepository foodRepository)
+    public OrderRepository(IList<Order> orders)
     {
-        _foodRepository = foodRepository;
+        _orders = orders;
     }
 
-    public IList<Order> GenerateOrder()
+    public void InsertOrder(Order order)
     {
-        var orders = new List<Order>
-        {
-            new()
-            {
-                Id = 1,
-                Priority = 1,
-                FoodList = { 1, 2 },
-                MaxWait = 20
-            },
-            new()
-            {
-                Id = 1,
-                Priority = 1,
-                FoodList = { 1, 2 },
-                MaxWait = 20
-            },
-            new()
-            {
-                Id = 1,
-                Priority = 1,
-                FoodList = { 1, 2 },
-                MaxWait = 20
-            },
-            new()
-            {
-                Id = 1,
-                Priority = 1,
-                FoodList = { 1, 2 },
-                MaxWait = 20
-            }
-        };
-        
-        return orders;
+        _orders.Add(order);
+    }
+
+    public Task<Order?> GetOrderByTableId(int tableId)
+    {
+        return Task.FromResult(_orders.FirstOrDefault(order => order.TableId.Equals(tableId)));
     }
 }

@@ -1,11 +1,12 @@
-﻿using DiningHall.Models;
+﻿using System.Collections.Concurrent;
+using DiningHall.Models;
 
 namespace DiningHall.Services.TableService;
 
 public interface ITableService
 {
-    Table? GetTableById(int id);
-    IList<Table> GetTable();
+    Task<Table?> GetTableById(int id);
+    ConcurrentBag<Table> GetTable();
     void GenerateTables();
-    Table? GetTableByStatus(Status status);
+    Task<Table?> GetTableByStatus(Status status);
 }

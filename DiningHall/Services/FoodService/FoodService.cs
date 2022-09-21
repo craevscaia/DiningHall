@@ -21,13 +21,14 @@ public class FoodService : IFoodService
     {
         return _foodRepository.GetFood();
     }
-
+    
+    //Return the object by id
     public Food? GetFoodById(int id)
     {
         return _foodRepository.GetFoodById(id);
     }
     
-    public IList<int> GenerateOrderFood()
+    public Task<IList<int>> GenerateOrderFood()
     {
         var random = new Random();
         var size = random.Next(10);
@@ -38,6 +39,6 @@ public class FoodService : IFoodService
             listOfFood.Add(random.Next(13));
         }
 
-        return listOfFood;
+        return Task.FromResult<IList<int>>(listOfFood);
     }
 }

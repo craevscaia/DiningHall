@@ -7,9 +7,9 @@ namespace DiningHall.DiningHall;
 
 public class DiningHall : IDiningHall
 {
-    private readonly IOrderService _orderService;
+    private static IOrderService _orderService;
     private readonly ITableService _tableService;
-    private readonly IWaiterService _waiterService;
+    private static IWaiterService _waiterService;
     private readonly IFoodService _foodService;
 
     public DiningHall(IOrderService orderService, ITableService tableService, IWaiterService waiterService,
@@ -21,7 +21,7 @@ public class DiningHall : IDiningHall
         _foodService = foodService;
     }
     
-    //This will run in paraele three method that generate tables, waiters and food
+    //This will run in parallel three method that generate tables, waiters and food
     
     public async Task InitializeDiningHall()
     {
@@ -34,13 +34,29 @@ public class DiningHall : IDiningHall
 
         await Task.WhenAll(taskList);
     }
+    
+    public Task MaintainDiningHall(CancellationToken stoppingToken)
+    {
+        var generateOrderThread1 = CreateThread(stoppingToken);
+        var generateOrderThread2 = CreateThread(stoppingToken);
+        var generateOrderThread3 = CreateThread(stoppingToken);
+        var generateOrderThread4 = CreateThread(stoppingToken);
+        generateOrderThread1.Start();
+        generateOrderThread2.Start();
+        generateOrderThread3.Start();
+        generateOrderThread4.Start();
+
+        return Task.CompletedTask;
+    }
 
 
-    public void MaintainDiningHall(CancellationToken stoppingToken)
+
+    private static async Task CreateThread(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            _orderService.GenerateAndSendOrder();
+            await _orderService.GenerateOrder();
+            await _waiterService.ServTable();
         }
     }
 

@@ -1,4 +1,5 @@
-﻿using DiningHall.Models;
+﻿using System.Collections.Concurrent;
+using DiningHall.Models;
 using DiningHall.Repository.TableRepository;
 
 namespace DiningHall.Services.TableService;
@@ -18,17 +19,21 @@ public class TableService : ITableService
         _tableRepository.GenerateTables();
     }
     
-    public Table? GetTableByStatus(Status status)
+    public Task<Table?> GetTableByStatus(Status status)
     {
         return _tableRepository.GetTableByStatus(status);
     }
 
-    public IList<Table> GetTable()
+    public ConcurrentBag<Table> GetTable()
     {
         return _tableRepository.GetTable();
     }
-    public Table? GetTableById(int id)
+    public Task<Table?> GetTableById(int id)
     {
         return _tableRepository.GetTableById(id);
+    }
+    public Task<Table?> GetFreeTable()
+    {
+        return _tableRepository.GetFreeTable();
     }
 }

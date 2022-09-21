@@ -1,11 +1,13 @@
-﻿using DiningHall.Models;
+﻿using System.Collections.Concurrent;
+using DiningHall.Models;
 
 namespace DiningHall.Repository.TableRepository;
 
 public interface ITableRepository
 {
     void GenerateTables();
-    IList<Table> GetTable();
-    Table? GetTableById(int id);
-    Table? GetFreeTable();
+    ConcurrentBag<Table> GetTable();
+    Task<Table?> GetTableById(int id);
+    Task<Table?> GetTableByStatus(Status status);
+    Task<Table?> GetFreeTable();
 }

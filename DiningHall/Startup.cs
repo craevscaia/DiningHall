@@ -2,9 +2,10 @@
 using DiningHall.Repository.FoodRepository;
 using DiningHall.Repository.TableRepository;
 using DiningHall.Repository.WaiterRepsoitory;
-using DiningHall.Repository.OrderRepository;
+using DiningHall.Services.FoodService;
 using DiningHall.Services.OrderService;
 using DiningHall.Services.TableService;
+using DiningHall.Services.WaiterService;
 
 namespace DiningHall;
 
@@ -25,10 +26,11 @@ public class Startup
         services.AddRazorPages();
         services.AddSingleton<IFoodRepository, FoodRepository>();
         services.AddSingleton<ITableRepository, TableRepository>();
-        services.AddSingleton<IOrderRepository, OrderRepository>();
         services.AddSingleton<IWaiterRepository, WaiterRepository>();
         services.AddSingleton<IOrderService, OrderService>();
         services.AddSingleton<ITableService, TableService>();
+        services.AddSingleton<IWaiterService, WaiterService>();
+        services.AddSingleton<IFoodService, FoodService>();
         
         services.AddSingleton<IDiningHall, DiningHall.DiningHall>();
         services.AddHostedService<BackgroundTask.BackgroundTask>();

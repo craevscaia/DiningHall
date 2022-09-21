@@ -6,5 +6,6 @@ public interface IWaiterRepository
 {
     void GenerateWaiter();
     IList<Waiter> GetWaiter();
-    Waiter? GetWaiterById(int id);
+    Task<Waiter?> GetWaiterById(int id);
+    Task<Waiter?> GetFreeWaiter();
 }
