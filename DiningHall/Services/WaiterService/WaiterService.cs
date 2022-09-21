@@ -38,6 +38,7 @@ public class WaiterService : IWaiterService
         return _waiterRepository.GetFreeWaiter();
     }
 
+    //Sent http requests
     public async Task  ServTable()
     {
         var waiter = await GetFreeWaiter();

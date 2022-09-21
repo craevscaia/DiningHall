@@ -24,10 +24,6 @@ public class BackgroundTask : BackgroundService
         {
             // ignored
         }
-        finally
-        {
-            if (!stoppingToken.IsCancellationRequested)
-                Console.WriteLine("Programul a dorit sa se opreasca asa ca el s-a oprit");
-        }
+       
     }
 }

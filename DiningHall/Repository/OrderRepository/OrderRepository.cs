@@ -4,11 +4,11 @@ namespace DiningHall.Repository.OrderRepository;
 
 public class OrderRepository : IOrderRepository
 {
-    private IList<Order> _orders;
+    private readonly IList<Order> _orders;
 
-    public OrderRepository(IList<Order> orders)
+    public OrderRepository()
     {
-        _orders = orders;
+        _orders = new List<Order>();
     }
 
     public void InsertOrder(Order order)

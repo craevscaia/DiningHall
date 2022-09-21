@@ -46,8 +46,8 @@ public class OrderService : IOrderService
                 table.Status = Status.Busy;
                 _orderRepository.InsertOrder(order);
                 Console.WriteLine($"A order with id {order.Id} was generated");
-                Console.WriteLine($"Next order in 30 sec");
-                await Task.Delay(TimeSpan.FromSeconds(30)); // sleep this methode for 30 sec, we will generate an order every 30 sec
+                Console.WriteLine($"Next order in 10 sec");
+                await Task.Delay(TimeSpan.FromSeconds(10)); // sleep this methode for 30 sec, we will generate an order every 30 sec
             }
             else
             {
