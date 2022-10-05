@@ -6,7 +6,7 @@ namespace DiningHall.Repository.WaiterRepsoitory;
 public interface IWaiterRepository
 {
     void GenerateWaiter();
-    ConcurrentBag<Waiter> GetWaiter();
+    Task<ConcurrentBag<Waiter>> GetWaiter();
     Task<Waiter?> GetWaiterById(int id);
     Task<Waiter?> GetFreeWaiter();
 }

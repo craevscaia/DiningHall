@@ -17,14 +17,15 @@ public class WaiterRepository : IWaiterRepository
             _waiters.Add(new Waiter()
             {
                 Id = id,
-                IsFree = true
+                IsFree = true,
+                ActiveOrders = new List<Order>()
             });
         }
     }
     
-    public ConcurrentBag<Waiter> GetWaiter()
+    public Task<ConcurrentBag<Waiter>> GetWaiter()
     {
-        return _waiters;
+        return Task.FromResult(_waiters);
     }
 
     public Task<Waiter?> GetWaiterById(int id)

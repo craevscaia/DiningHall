@@ -6,7 +6,7 @@ namespace DiningHall.Services.WaiterService;
 public interface IWaiterService
 {   
     void GenerateWaiters();
-    ConcurrentBag<Waiter> GetWaiters();
+    Task<ConcurrentBag<Waiter>> GetWaiters();
     Task<Waiter?> GetWaitersById(int id);
     Task<Waiter?> GetFreeWaiter();
     Task ServTable();

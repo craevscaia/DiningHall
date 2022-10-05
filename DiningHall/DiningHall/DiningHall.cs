@@ -7,10 +7,10 @@ namespace DiningHall.DiningHall;
 
 public class DiningHall : IDiningHall
 {
-    private static IOrderService _orderService;
+    private readonly IOrderService _orderService;
     private readonly ITableService _tableService;
     private readonly IFoodService _foodService;
-    private static IWaiterService _waiterService;
+    private readonly IWaiterService _waiterService;
 
     public DiningHall(IOrderService orderService, ITableService tableService, IFoodService foodService,
         IWaiterService waiterService)
@@ -38,20 +38,22 @@ public class DiningHall : IDiningHall
     public async Task MaintainDiningHall(CancellationToken stoppingToken)
     {
         var orderThread = Task.Run(() => GenerateOrders(stoppingToken), stoppingToken);
+
         var waiter1 = Task.Run(() => ServeTable(stoppingToken), stoppingToken);
         var waiter2 = Task.Run(() => ServeTable(stoppingToken), stoppingToken);
         var waiter3 = Task.Run(() => ServeTable(stoppingToken), stoppingToken);
         var waiter4 = Task.Run(() => ServeTable(stoppingToken), stoppingToken);
 
+
         var taskList = new List<Task>
         {
-            orderThread, waiter1, waiter2, waiter3, waiter4
+            waiter1,waiter2, waiter3, waiter4, orderThread
         };
         
         await Task.WhenAll(taskList);
     }
 
-    private static async Task GenerateOrders(CancellationToken stoppingToken)
+    private async Task GenerateOrders(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -59,7 +61,7 @@ public class DiningHall : IDiningHall
         }
     }
 
-    private static async Task ServeTable(CancellationToken stoppingToken)
+    private async Task ServeTable(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {

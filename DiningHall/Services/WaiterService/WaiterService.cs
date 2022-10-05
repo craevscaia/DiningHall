@@ -26,7 +26,7 @@ public class WaiterService : IWaiterService
         _waiterRepository.GenerateWaiter();
     }
 
-    public ConcurrentBag<Waiter> GetWaiters()
+    public Task<ConcurrentBag<Waiter>> GetWaiters()
     {
         return _waiterRepository.GetWaiter();
     }
@@ -62,17 +62,15 @@ public class WaiterService : IWaiterService
                     waiter.ActiveOrders.Add(order);
 
                     Console.WriteLine(
-                        $"I am {waiter.Id} and I drive order {order.Id} in the kitchen from table {table.Id}",
+                        $"I am {waiter.Id} and I drive order {order.Id} in the kitchen",
                         ConsoleColor.Blue);
                     await _orderService.SendOrder(order);
-
-
                     await SleepWaiter(waiter);
                 }
             }
             else
             {
-                var sleepTime = RandomGenerator.NumberGenerator(10, 15);
+                var sleepTime = RandomGenerator.NumberGenerator(20, 30);
                 Console.WriteLine(
                     $"There are no tables that need an waiter now, this thread will try again in {sleepTime} seconds",
                     ConsoleColor.Red);
@@ -81,7 +79,7 @@ public class WaiterService : IWaiterService
         }
         else
         {
-            var sleepTime = RandomGenerator.NumberGenerator(5, 10);
+            var sleepTime = RandomGenerator.NumberGenerator(30, 40);
             Console.WriteLine("There are no free waiters now");
             await SleepingGenerator.Delay(sleepTime);
         }

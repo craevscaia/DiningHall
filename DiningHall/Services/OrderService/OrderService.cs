@@ -46,7 +46,7 @@ public class OrderService : IOrderService
 
             _orderRepository.InsertOrder(order);
             Console.WriteLine($"A order with id {order.Id} was generated", ConsoleColor.Green);
-            var sleepingTime = RandomGenerator.NumberGenerator(10, 15);
+            var sleepingTime = RandomGenerator.NumberGenerator(30, 35);
             Console.WriteLine($"The next order in: {sleepingTime} seconds", ConsoleColor.Yellow);
             await SleepingGenerator.Delay(sleepingTime);
         }
@@ -62,32 +62,41 @@ public class OrderService : IOrderService
 
     public async Task SendOrder(Order order)
     {
-        try
-        {
-            var serializeObject = JsonConvert.SerializeObject(order);
-            var data = new StringContent(serializeObject, Encoding.UTF8, "application/json");
-
-            const string url = Setting.KitchenUrl;
-            using var client = new HttpClient();
-
-            var response = await client.PostAsync(url, data);
-
-            if (response.StatusCode == HttpStatusCode.Accepted)
+        await Task.Run(async () => { 
+            try
             {
-                Console.WriteLine($"The order with id {order.Id} was driven in the kitchen");
-                order.Status = Status.InKitchen;
+                var serializeObject = JsonConvert.SerializeObject(order);
+                var data = new StringContent(serializeObject, Encoding.UTF8, "application/json");
+
+                const string url = Setting.KitchenUrl;
+                using var client = new HttpClient();
+
+                var response = await client.PostAsync(url, data);
+
+                if (response.StatusCode == HttpStatusCode.Accepted)
+                {
+                    Console.WriteLine($"The order with id {order.Id} was driven in the kitchen");
+                }
             }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"Failed to send order {order.Id}", ConsoleColor.Red);
-        }
+            catch (Exception e)
+            { 
+                Console.WriteLine($"Failed to send order {order.Id}", ConsoleColor.Red);
+            }
+        });
     }
 
-    public Task<ConcurrentBag<Order>> GetAllOrders()
+
+public Task<ConcurrentBag<Order>> GetAllOrders()
     {
         return Task.FromResult(_orderRepository.GetAllOrders());
     }
+
+    private Task<Order?> GetById(int id)
+    {
+        return _orderRepository.GetOrderByTableId(id);
+    }
+
+
     public Task<Order?> GetOrderByTableId(int id)
     {
         return _orderRepository.GetOrderByTableId(id);
