@@ -6,5 +6,6 @@ public enum Status
     Ordered = 2,
     Served = 3,
     Busy = 4,
-    OrderTaken
+    OrderTaken,
+    InKitchen
 }

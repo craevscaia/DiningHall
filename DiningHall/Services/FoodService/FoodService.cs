@@ -31,7 +31,7 @@ public class FoodService : IFoodService
     public Task<IList<int>> GenerateOrderFood()
     {
         var random = new Random();
-        var size = random.Next(10);
+        var size = random.Next(5);
         var listOfFood = new List<int>();
 
         for (var id = 0; id < size; id++)

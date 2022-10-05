@@ -1,13 +1,14 @@
-﻿using DiningHall.Models;
+﻿using System.Collections.Concurrent;
+using DiningHall.Models;
 namespace DiningHall.Repository.WaiterRepsoitory;
 
 public class WaiterRepository : IWaiterRepository
 {
-    private readonly IList<Waiter> _waiters;
+    private readonly ConcurrentBag<Waiter> _waiters;
 
     public WaiterRepository()
     {
-        _waiters = new List<Waiter>();
+        _waiters = new ConcurrentBag<Waiter>();
     }
     public void GenerateWaiter()
     {
@@ -21,7 +22,7 @@ public class WaiterRepository : IWaiterRepository
         }
     }
     
-    public IList<Waiter> GetWaiter()
+    public ConcurrentBag<Waiter> GetWaiter()
     {
         return _waiters;
     }

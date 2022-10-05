@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Collections.Concurrent;
+using System.Net;
+using System.Text;
 using DiningHall.Helpers;
 using DiningHall.Models;
 using DiningHall.Repository.OrderRepository;
@@ -11,50 +13,50 @@ namespace DiningHall.Services.OrderService;
 public class OrderService : IOrderService
 {
     // Give an order to this method to send it in the kitchen
+    private readonly IOrderRepository _orderRepository;
     private readonly ITableService _tableService;
     private readonly IFoodService _foodService;
-    private readonly IOrderRepository _orderRepository;
 
-    public OrderService(ITableService tableService, IFoodService foodService, IOrderRepository orderRepository)
+    public OrderService(IOrderRepository orderRepository, IFoodService foodService, ITableService tableService)
     {
-        _tableService = tableService;
-        _foodService = foodService;
         _orderRepository = orderRepository;
+        _foodService = foodService;
+        _tableService = tableService;
     }
 
     public async Task GenerateOrder()
     {
-        var random = new Random();
-        while (true)
+        var table = await _tableService.GetTableByStatus(Status.Free);
+
+        if (table != null)
         {
-            var table = await _tableService.GetTableByStatus(Status.Free);
-
-            if (table != null)
+            var foodList = await _foodService.GenerateOrderFood();
+            var order = new Order
             {
-                var foodList = await _foodService.GenerateOrderFood();
-                var order = new Order
-                {
-                    Id = await IdGenerator.GenerateId(),
-                    TableId = table.Id,
-                    Priority = random.Next(3),
-                    CreatedOnUtc = DateTime.UtcNow,
-                    OrderIsComplete = false,
-                    FoodList = foodList,
-                };
+                Id = await IdGenerator.GenerateId(),
+                TableId = table.Id,
+                Priority = RandomGenerator.NumberGenerator(5),
+                CreatedOnUtc = DateTime.UtcNow,
+                OrderIsComplete = false,
+                FoodList = foodList,
+            };
 
-                table.OrderId = order.Id;
-                table.Status = Status.Busy;
-                _orderRepository.InsertOrder(order);
-                Console.WriteLine($"A order with id {order.Id} was generated");
-                Console.WriteLine($"Next order in 10 sec");
-                await Task.Delay(TimeSpan.FromSeconds(10)); // sleep this methode for 30 sec, we will generate an order every 30 sec
-            }
-            else
-            {
-                await Task.Delay(TimeSpan.FromSeconds(60));
-            }
+            table.OrderId = order.Id;
+            table.Status = Status.Busy;
 
-            break;
+            _orderRepository.InsertOrder(order);
+            Console.WriteLine($"A order with id {order.Id} was generated", ConsoleColor.Green);
+            var sleepingTime = RandomGenerator.NumberGenerator(10, 15);
+            Console.WriteLine($"The next order in: {sleepingTime} seconds", ConsoleColor.Yellow);
+            await SleepingGenerator.Delay(sleepingTime);
+        }
+        else
+        {
+            var sleep = RandomGenerator.NumberGenerator(10, 20);
+            Console.WriteLine(
+                $"There are no free tables now, you need to wait {sleep}",
+                ConsoleColor.DarkRed);
+            await SleepingGenerator.Delay(sleep);
         }
     }
 
@@ -62,26 +64,32 @@ public class OrderService : IOrderService
     {
         try
         {
-            var json = JsonConvert.SerializeObject(order); // convert to json
-            var data = new StringContent(json, Encoding.UTF8, "application/json"); // convert to data
-            var url = Setting.KitchenUrl;
+            var serializeObject = JsonConvert.SerializeObject(order);
+            var data = new StringContent(serializeObject, Encoding.UTF8, "application/json");
 
-            using var client = new HttpClient(); //open a portal 
+            const string url = Setting.KitchenUrl;
+            using var client = new HttpClient();
 
-            var response = await client.PostAsync(url, data); //send through portal my 
-            if (response.IsSuccessStatusCode)
+            var response = await client.PostAsync(url, data);
+
+            if (response.StatusCode == HttpStatusCode.Accepted)
             {
-                Console.Write($"A order with id {order.Id} was sent to kitchen");
+                Console.WriteLine($"The order with id {order.Id} was driven in the kitchen");
+                order.Status = Status.InKitchen;
             }
         }
         catch (Exception e)
         {
-            Console.WriteLine("Failed to send order");
+            Console.WriteLine($"Failed to send order {order.Id}", ConsoleColor.Red);
         }
     }
 
-    public Task<Order?> GetOrderByTableId(int tableId)
+    public Task<ConcurrentBag<Order>> GetAllOrders()
     {
-        return _orderRepository.GetOrderByTableId(tableId);
+        return Task.FromResult(_orderRepository.GetAllOrders());
+    }
+    public Task<Order?> GetOrderByTableId(int id)
+    {
+        return _orderRepository.GetOrderByTableId(id);
     }
 }

@@ -17,13 +17,12 @@ public class BackgroundTask : BackgroundService
             await Task.Delay(5000, stoppingToken);
             using var scope = _serviceScopeFactory.CreateScope();
             var diningHall = scope.ServiceProvider.GetRequiredService<IDiningHall>();
-            await diningHall.InitializeDiningHall(); //initialize dining hall method
-            diningHall.MaintainDiningHall(stoppingToken);
+            await diningHall.InitializeDiningHall();
+            await diningHall.MaintainDiningHall(stoppingToken);
         }
         catch (Exception)
         {
             // ignored
         }
-       
     }
 }

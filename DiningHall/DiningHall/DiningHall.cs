@@ -9,22 +9,21 @@ public class DiningHall : IDiningHall
 {
     private static IOrderService _orderService;
     private readonly ITableService _tableService;
-    private static IWaiterService _waiterService;
     private readonly IFoodService _foodService;
+    private static IWaiterService _waiterService;
 
-    public DiningHall(IOrderService orderService, ITableService tableService, IWaiterService waiterService,
-        IFoodService foodService)
+    public DiningHall(IOrderService orderService, ITableService tableService, IFoodService foodService,
+        IWaiterService waiterService)
     {
         _orderService = orderService;
         _tableService = tableService;
-        _waiterService = waiterService;
         _foodService = foodService;
+        _waiterService = waiterService;
     }
-    
-    //This will run in parallel three method that generate tables, waiters and food
-    
+
     public async Task InitializeDiningHall()
     {
+        // var watch = System.Diagnostics.Stopwatch.StartNew();
         var taskList = new List<Task>
         {
             Task.Run(() => _foodService.GenerateFood()),
@@ -34,30 +33,37 @@ public class DiningHall : IDiningHall
 
         await Task.WhenAll(taskList);
     }
-    
-    public Task MaintainDiningHall(CancellationToken stoppingToken)
-    {
-        var generateOrderThread1 = CreateThread(stoppingToken);
-        var generateOrderThread2 = CreateThread(stoppingToken);
-        var generateOrderThread3 = CreateThread(stoppingToken);
-        var generateOrderThread4 = CreateThread(stoppingToken);
-        generateOrderThread1.Start();
-        generateOrderThread2.Start();
-        generateOrderThread3.Start();
-        generateOrderThread4.Start();
 
-        return Task.CompletedTask;
+
+    public async Task MaintainDiningHall(CancellationToken stoppingToken)
+    {
+        var orderThread = Task.Run(() => GenerateOrders(stoppingToken), stoppingToken);
+        var waiter1 = Task.Run(() => ServeTable(stoppingToken), stoppingToken);
+        var waiter2 = Task.Run(() => ServeTable(stoppingToken), stoppingToken);
+        var waiter3 = Task.Run(() => ServeTable(stoppingToken), stoppingToken);
+        var waiter4 = Task.Run(() => ServeTable(stoppingToken), stoppingToken);
+
+        var taskList = new List<Task>
+        {
+            orderThread, waiter1, waiter2, waiter3, waiter4
+        };
+        
+        await Task.WhenAll(taskList);
     }
 
-
-
-    private static async Task CreateThread(CancellationToken stoppingToken)
+    private static async Task GenerateOrders(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
             await _orderService.GenerateOrder();
-            await _waiterService.ServTable();
         }
     }
 
+    private static async Task ServeTable(CancellationToken stoppingToken)
+    {
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            await _waiterService.ServTable();
+        }
+    }
 }

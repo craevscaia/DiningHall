@@ -10,4 +10,5 @@ public class Order
     public DateTime CreatedOnUtc { get; set; }
     public bool OrderIsComplete { get; set; }
     public int WaiterId { get; set; }
+    public Status Status { get; set; }
 }
