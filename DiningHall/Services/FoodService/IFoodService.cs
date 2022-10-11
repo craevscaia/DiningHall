@@ -6,6 +6,6 @@ public interface IFoodService
 {
     public void GenerateFood();
     public IList<Food> GetFood();
-    public Food? GetFoodById(int id);
+    public Task<Food?> GetFoodById(int id);
     Task<IList<int>> GenerateOrderFood();
 }

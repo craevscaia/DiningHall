@@ -12,6 +12,7 @@ public class WaiterService : IWaiterService
     private readonly IWaiterRepository _waiterRepository;
     private readonly ITableRepository _tableRepository;
     private readonly IOrderService _orderService;
+    private readonly Semaphore _semaphore;
 
     public WaiterService(IWaiterRepository waiterRepository, ITableRepository tableRepository,
         IOrderService orderService)
@@ -19,6 +20,7 @@ public class WaiterService : IWaiterService
         _waiterRepository = waiterRepository;
         _tableRepository = tableRepository;
         _orderService = orderService;
+        _semaphore = new Semaphore(1, 1);
     }
 
     public void GenerateWaiters()
@@ -42,7 +44,7 @@ public class WaiterService : IWaiterService
     }
     
     //Sent http requests
-   public async Task ServTable()
+    public async Task ServTable()
     {
         var waiter = await GetFreeWaiter();
 
@@ -56,30 +58,30 @@ public class WaiterService : IWaiterService
                 if (order != null)
                 {
                     order.WaiterId = waiter.Id;
-
+                    order.CreatedOnUtc = DateTime.Now;
+                    
                     waiter.Order = order;
                     waiter.IsFree = false;
                     waiter.ActiveOrders.Add(order);
 
                     Console.WriteLine(
-                        $"I am {waiter.Id} and I drive order {order.Id} in the kitchen",
+                        $"I am {waiter.Id} and I drive order {order.Id} in the kitchen from table {table.Id}",
                         ConsoleColor.Blue);
                     await _orderService.SendOrder(order);
+
+                    table.Status = Status.OrderTaken;
                     await SleepWaiter(waiter);
                 }
             }
             else
             {
-                var sleepTime = RandomGenerator.NumberGenerator(20, 30);
-                Console.WriteLine(
-                    $"There are no tables that need an waiter now, this thread will try again in {sleepTime} seconds",
-                    ConsoleColor.Red);
+                var sleepTime = RandomGenerator.NumberGenerator(10);
                 await SleepingGenerator.Delay(sleepTime);
             }
         }
         else
         {
-            var sleepTime = RandomGenerator.NumberGenerator(30, 40);
+            var sleepTime = RandomGenerator.NumberGenerator(2, 10);
             Console.WriteLine("There are no free waiters now");
             await SleepingGenerator.Delay(sleepTime);
         }

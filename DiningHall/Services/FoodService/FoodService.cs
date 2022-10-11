@@ -23,9 +23,9 @@ public class FoodService : IFoodService
     }
     
     //Return the object by id
-    public Food? GetFoodById(int id)
+    public Task<Food?> GetFoodById(int id)
     {
-        return _foodRepository.GetFoodById(id);
+        return Task.FromResult(_foodRepository.GetFoodById(id));
     }
     
     public Task<IList<int>> GenerateOrderFood()

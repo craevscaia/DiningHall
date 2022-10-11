@@ -39,6 +39,7 @@ public class OrderService : IOrderService
                 CreatedOnUtc = DateTime.UtcNow,
                 OrderIsComplete = false,
                 FoodList = foodList,
+                MaxWait = await CalculateMaximWaitingTime(foodList)
             };
 
             table.OrderId = order.Id;
@@ -60,6 +61,21 @@ public class OrderService : IOrderService
         }
     }
 
+    private async Task<int> CalculateMaximWaitingTime(IEnumerable<int> foodList)
+    {
+        var maxWaitingTime = 0;
+
+        foreach (var foodId in foodList)
+        {
+            var food = await _foodService.GetFoodById(foodId);
+            if (food != null)
+            {
+                maxWaitingTime += food.PreparationTime;
+            }
+        }
+
+        return (int) Math.Ceiling(maxWaitingTime * 1.3);
+    }
     public async Task SendOrder(Order order)
     {
         await Task.Run(async () => { 

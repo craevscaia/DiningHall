@@ -47,7 +47,7 @@ public class DiningHall : IDiningHall
 
         var taskList = new List<Task>
         {
-            waiter1,waiter2, waiter3, waiter4, orderThread
+            orderThread, waiter1,waiter2, waiter3, waiter4
         };
         
         await Task.WhenAll(taskList);
