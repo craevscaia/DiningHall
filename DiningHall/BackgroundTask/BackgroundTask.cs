@@ -18,7 +18,7 @@ public class BackgroundTask : BackgroundService
             using var scope = _serviceScopeFactory.CreateScope();
             var diningHall = scope.ServiceProvider.GetRequiredService<IDiningHall>();
             await diningHall.InitializeDiningHall();
-            await diningHall.MaintainDiningHall(stoppingToken);
+            // await diningHall.MaintainDiningHall(stoppingToken);
         }
         catch (Exception)
         {

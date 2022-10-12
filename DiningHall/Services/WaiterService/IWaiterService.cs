@@ -10,4 +10,5 @@ public interface IWaiterService
     Task<Waiter?> GetWaitersById(int id);
     Task<Waiter?> GetFreeWaiter();
     Task ServTable();
+    Task<Waiter> GetWaiterByTableId(int orderTableId);
 }

@@ -5,6 +5,7 @@ using DiningHall.Repository.TableRepository;
 using DiningHall.Repository.WaiterRepsoitory;
 using DiningHall.Services.FoodService;
 using DiningHall.Services.OrderService;
+using DiningHall.Services.RegisterRestaurantService;
 using DiningHall.Services.TableService;
 using DiningHall.Services.WaiterService;
 
@@ -34,6 +35,7 @@ public class Startup
         services.AddSingleton<ITableService, TableService>();
         services.AddSingleton<IWaiterService, WaiterService>();
         services.AddSingleton<IFoodService, FoodService>();
+        services.AddSingleton<IRegisterRestaurantService, RegisterRestaurantService>();
         
         services.AddSingleton<IDiningHall, DiningHall.DiningHall>();
         services.AddHostedService<BackgroundTask.BackgroundTask>();

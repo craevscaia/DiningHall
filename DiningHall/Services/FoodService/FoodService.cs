@@ -17,7 +17,7 @@ public class FoodService : IFoodService
         _foodRepository.GenerateFood();
     }
 
-    public IList<Food> GetFood()
+    public Task<IList<Food>> GetFood()
     {
         return _foodRepository.GetFood();
     }
@@ -31,7 +31,7 @@ public class FoodService : IFoodService
     public Task<IList<int>> GenerateOrderFood()
     {
         var random = new Random();
-        var size = random.Next(5);
+        var size = random.Next(8);
         var listOfFood = new List<int>();
 
         for (var id = 0; id < size; id++)

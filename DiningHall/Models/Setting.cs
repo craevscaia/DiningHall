@@ -7,4 +7,5 @@ public static class Setting
     //docker run --name dininghall-container -p 7065:80 dininghall
     
     public const string KitchenUrl = "https://localhost:7166/kitchen";
+    public const string FoodOrderingServiceRegisterUrl = "https://localhost:7143/register";
 }

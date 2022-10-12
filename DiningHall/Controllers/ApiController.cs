@@ -9,7 +9,7 @@ namespace DiningHall.Controllers;
 
 //Controller is meant to return order
 [ApiController]
-[Route("/distribution")] 
+[Route("/distribution")]
 public class ApiController : ControllerBase
 {
     private readonly ITableService _tableService;
@@ -23,21 +23,19 @@ public class ApiController : ControllerBase
         _semaphore = new Semaphore(1, 1);
     }
 
-    [HttpPost]  
+    [HttpPost]
     public async Task GetOrder([FromBody] Order order)
     {
         order.Status = Status.Served;
         var table = await _tableService.GetTableById(order.TableId);
         if (table != null)
         {
-            var waiter = await _waiterService.GetWaitersById(order.TableId);
-            waiter.IsFree = false;
             table.Status = Status.Free;
-            Console.WriteLine($"I received from the kitchen an order with id {order.Id} for table {order.TableId}", ConsoleColor.Cyan);
+            Console.WriteLine($"I received from the kitchen an order with id {order.Id} fo  r table {order.TableId}",
+                ConsoleColor.Cyan);
             _semaphore.WaitOne();
             RatingHelper.GetRating(order);
             _semaphore.Release();
-            waiter.IsFree = true;
         }
     }
 }

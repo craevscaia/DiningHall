@@ -3,5 +3,5 @@
 public interface IDiningHall
 {
     Task InitializeDiningHall();
-    Task MaintainDiningHall(CancellationToken stoppingToken);
-}
+    // Task MaintainDiningHall(CancellationToken stoppingToken);
+}           

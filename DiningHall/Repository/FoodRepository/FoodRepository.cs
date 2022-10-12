@@ -119,9 +119,9 @@ public class FoodRepository : IFoodRepository
         });
     }
 
-    public IList<Food> GetFood()
+    public Task<IList<Food>> GetFood()
     {
-        return _menu;
+        return Task.FromResult(_menu);
     }
 
     public Food? GetFoodById(int id)

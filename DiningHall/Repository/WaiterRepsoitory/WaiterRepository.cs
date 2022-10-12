@@ -37,4 +37,9 @@ public class WaiterRepository : IWaiterRepository
     {
         return Task.FromResult(_waiters.FirstOrDefault(waiter => waiter.IsFree));
     }
+
+    public Task<Waiter> GetWaiterByTableId(int orderTableId)
+    {
+       return Task.FromResult(_waiters.FirstOrDefault(waiter => waiter.Id.Equals(orderTableId)))!;
+    }
 }

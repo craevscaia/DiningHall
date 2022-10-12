@@ -87,6 +87,11 @@ public class WaiterService : IWaiterService
         }
     }
 
+    public Task<Waiter> GetWaiterByTableId(int orderTableId)
+    {
+        return _waiterRepository.GetWaiterByTableId(orderTableId);
+    }
+
     private static async Task SleepWaiter(Waiter waiter)
     {
         var sleepTime = RandomGenerator.NumberGenerator(20, 40);
